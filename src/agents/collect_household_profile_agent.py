@@ -39,10 +39,7 @@ class CollectHouseholdProfileAgent:
             )
             state['profile_data']['num_bedrooms'] = self._prompt_number(
                 "Enter number of bedrooms:"
-            )
-            state['profile_data']['num_occupants'] = self._prompt_number(
-                "Enter number of occupants:"
-            )
+            )           
             state['profile_data']['floor_area_sqft'] = self._prompt_number(
                 "Enter floor area in square feet (optional, press Enter to skip):",
                 allow_blank=True

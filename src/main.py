@@ -10,29 +10,59 @@ sys.path.insert(0, str(Path(__file__).parent))
 from langgraph.graph import StateGraph, START, END
 from state import HouseholdProfileState
 from agents.collect_household_profile_agent import CollectHouseholdProfileAgent
+from agents.capture_occupancy_details_agent import CaptureOccupancyDetailsAgent
+from agents.capture_household_appliances import CaptureHouseholdAppliancesAgent
+from agents.check_renewable_energy_assets_agent import CheckRenewableEnergyAssetsAgent
+from agents.assess_building_envelope_agent import AssessBuildingEnvelopeAgent
 
 # Load environment variables (for OpenAI API key)
 load_dotenv()
 
 # Initialize agents
 collect_household_agent = CollectHouseholdProfileAgent()
-
+capture_occupancy_agent = CaptureOccupancyDetailsAgent()
+capture_appliances_agent = CaptureHouseholdAppliancesAgent()
+check_renewable_energy_assets_agent = CheckRenewableEnergyAssetsAgent()
+assess_building_envelope_agent = AssessBuildingEnvelopeAgent()
 
 def collect_household_profile_node(state: HouseholdProfileState) -> HouseholdProfileState:    
     return collect_household_agent.process(state)
 
+def capture_occupancy_details_node(state: HouseholdProfileState) -> HouseholdProfileState:
+    return capture_occupancy_agent.process(state)
+
+def capture_appliances_node(state: HouseholdProfileState) -> HouseholdProfileState:
+    return capture_appliances_agent.process(state)
+
+def check_renewable_energy_assets_node(state: HouseholdProfileState) -> HouseholdProfileState:
+    return check_renewable_energy_assets_agent.process(state)
+
+def assess_building_envelope_node(state: HouseholdProfileState) -> HouseholdProfileState:
+    return assess_building_envelope_agent.process(state)
 
 def build_workflow():
    
     workflow = StateGraph(HouseholdProfileState)
     
     # Add nodes
+    """  
     workflow.add_node("collect_household_profile", collect_household_profile_node)
-    
+    workflow.add_node("capture_occupancy_details", capture_occupancy_details_node)
+    workflow.add_node("capture_appliances", capture_appliances_node)
+    workflow.add_node("check_renewable_energy_assets", check_renewable_energy_assets_node)
+    workflow.add_node("assess_building_envelope", assess_building_envelope_node)
     # Add edges
     workflow.add_edge(START, "collect_household_profile")
-    workflow.add_edge("collect_household_profile", END)
-    
+    workflow.add_edge("collect_household_profile", "capture_occupancy_details")
+    workflow.add_edge("capture_occupancy_details", "capture_appliances") """
+
+    workflow.add_node("check_renewable_energy_assets", check_renewable_energy_assets_node)
+    workflow.add_node("assess_building_envelope", assess_building_envelope_node)
+
+    workflow.add_edge(START, "check_renewable_energy_assets")
+    workflow.add_edge("check_renewable_energy_assets", "assess_building_envelope")
+    workflow.add_edge("assess_building_envelope", END)
+
     # Compile the graph
     graph = workflow.compile()
     
