@@ -14,6 +14,8 @@ from agents.capture_occupancy_details_agent import CaptureOccupancyDetailsAgent
 from agents.capture_household_appliances import CaptureHouseholdAppliancesAgent
 from agents.check_renewable_energy_assets_agent import CheckRenewableEnergyAssetsAgent
 from agents.assess_building_envelope_agent import AssessBuildingEnvelopeAgent
+from agents.gross_energy_calculation_agent import GrossEnergyCalculationAgent
+from agents.apply_insulation_adjustments import ApplyInsulationAdjustmentsAgent
 
 # Load environment variables (for OpenAI API key)
 load_dotenv()
@@ -51,17 +53,27 @@ def build_workflow():
     workflow.add_node("capture_appliances", capture_appliances_node)
     workflow.add_node("check_renewable_energy_assets", check_renewable_energy_assets_node)
     workflow.add_node("assess_building_envelope", assess_building_envelope_node)
+    workflow.add_node("gross_energy_calculation", gross_energy_calculation_node)
+    workflow.add_node("apply_insulation_adjustments", apply_insulation_adjustments_node) """
     # Add edges
     workflow.add_edge(START, "collect_household_profile")
     workflow.add_edge("collect_household_profile", "capture_occupancy_details")
-    workflow.add_edge("capture_occupancy_details", "capture_appliances") """
-
-    workflow.add_node("check_renewable_energy_assets", check_renewable_energy_assets_node)
-    workflow.add_node("assess_building_envelope", assess_building_envelope_node)
-
-    workflow.add_edge(START, "check_renewable_energy_assets")
+    workflow.add_edge("capture_occupancy_details", "capture_appliances") 
+    workflow.add_edge("capture_appliances", "check_renewable_energy_assets")
     workflow.add_edge("check_renewable_energy_assets", "assess_building_envelope")
-    workflow.add_edge("assess_building_envelope", END)
+    workflow.add_edge("assess_building_envelope", "gross_energy_calculation")
+    workflow.add_edge("gross_energy_calculation", "apply_insulation_adjustments")
+    workflow.add_edge("apply_insulation_adjustments", END)"""
+
+    
+    workflow.add_node("capture_appliances", capture_appliances_node)    
+    workflow.add_node("gross_energy_calculation", gross_energy_calculation_node)
+    workflow.add_node("apply_insulation_adjustments", apply_insulation_adjustments_node)
+
+    workflow.add_edge(START, "capture_appliances")
+    workflow.add_edge("capture_appliances", "gross_energy_calculation")
+    workflow.add_edge("gross_energy_calculation", "apply_insulation_adjustments")
+    workflow.add_edge("apply_insulation_adjustments", END)
 
     # Compile the graph
     graph = workflow.compile()
