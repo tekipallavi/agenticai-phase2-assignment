@@ -16,6 +16,7 @@ from agents.check_renewable_energy_assets_agent import CheckRenewableEnergyAsset
 from agents.assess_building_envelope_agent import AssessBuildingEnvelopeAgent
 from agents.gross_energy_calculation_agent import GrossEnergyCalculationAgent
 from agents.apply_insulation_adjustments import ApplyInsulationAdjustmentsAgent
+from agents.calculate_grid_draw_and_expense_agent import CalculateGridDrawAndExpenseAgent
 
 # Load environment variables (for OpenAI API key)
 load_dotenv()
@@ -26,6 +27,9 @@ capture_occupancy_agent = CaptureOccupancyDetailsAgent()
 capture_appliances_agent = CaptureHouseholdAppliancesAgent()
 check_renewable_energy_assets_agent = CheckRenewableEnergyAssetsAgent()
 assess_building_envelope_agent = AssessBuildingEnvelopeAgent()
+gross_energy_calculation_agent = GrossEnergyCalculationAgent()
+apply_insulation_adjustments_agent = ApplyInsulationAdjustmentsAgent()
+calculate_grid_draw_and_expense_agent = CalculateGridDrawAndExpenseAgent()
 
 def collect_household_profile_node(state: HouseholdProfileState) -> HouseholdProfileState:    
     return collect_household_agent.process(state)
@@ -42,6 +46,16 @@ def check_renewable_energy_assets_node(state: HouseholdProfileState) -> Househol
 def assess_building_envelope_node(state: HouseholdProfileState) -> HouseholdProfileState:
     return assess_building_envelope_agent.process(state)
 
+def gross_energy_calculation_node(state: HouseholdProfileState) -> HouseholdProfileState:
+    return gross_energy_calculation_agent.process(state)
+
+
+def apply_insulation_adjustments_node(state: HouseholdProfileState) -> HouseholdProfileState:
+    return apply_insulation_adjustments_agent.process(state)
+
+def calculate_grid_draw_and_expense_node(state: HouseholdProfileState) -> HouseholdProfileState:
+    return calculate_grid_draw_and_expense_agent.process(state)
+
 def build_workflow():
    
     workflow = StateGraph(HouseholdProfileState)
@@ -54,7 +68,9 @@ def build_workflow():
     workflow.add_node("check_renewable_energy_assets", check_renewable_energy_assets_node)
     workflow.add_node("assess_building_envelope", assess_building_envelope_node)
     workflow.add_node("gross_energy_calculation", gross_energy_calculation_node)
-    workflow.add_node("apply_insulation_adjustments", apply_insulation_adjustments_node) """
+    workflow.add_node("calculate_grid_draw_and_expense", calculate_grid_draw_and_expense_node)
+    workflow.add_node("apply_insulation_adjustments", apply_insulation_adjustments_node)
+    workflow.add_node("calculate_grid_draw_and_expense", calculate_grid_draw_and_expense_node)
     # Add edges
     workflow.add_edge(START, "collect_household_profile")
     workflow.add_edge("collect_household_profile", "capture_occupancy_details")
@@ -63,17 +79,24 @@ def build_workflow():
     workflow.add_edge("check_renewable_energy_assets", "assess_building_envelope")
     workflow.add_edge("assess_building_envelope", "gross_energy_calculation")
     workflow.add_edge("gross_energy_calculation", "apply_insulation_adjustments")
-    workflow.add_edge("apply_insulation_adjustments", END)"""
+    workflow.add_edge("apply_insulation_adjustments", "calculate_grid_draw_and_expense")
+    workflow.add_edge("calculate_grid_draw_and_expense", END)
+    """
 
     
-    workflow.add_node("capture_appliances", capture_appliances_node)    
+    workflow.add_node("capture_appliances", capture_appliances_node) 
+    workflow.add_node("check_renewable_energy_assets", check_renewable_energy_assets_node)   
     workflow.add_node("gross_energy_calculation", gross_energy_calculation_node)
+    workflow.add_node("calculate_grid_draw_and_expense", calculate_grid_draw_and_expense_node)
     workflow.add_node("apply_insulation_adjustments", apply_insulation_adjustments_node)
+    
 
     workflow.add_edge(START, "capture_appliances")
-    workflow.add_edge("capture_appliances", "gross_energy_calculation")
+    workflow.add_edge("capture_appliances", "check_renewable_energy_assets")
+    workflow.add_edge("check_renewable_energy_assets", "gross_energy_calculation")
     workflow.add_edge("gross_energy_calculation", "apply_insulation_adjustments")
-    workflow.add_edge("apply_insulation_adjustments", END)
+    workflow.add_edge("apply_insulation_adjustments", "calculate_grid_draw_and_expense")
+    workflow.add_edge("calculate_grid_draw_and_expense", END)
 
     # Compile the graph
     graph = workflow.compile()
@@ -94,8 +117,7 @@ def initializeProfile(profile_data: dict):
     graph = build_workflow()
     final_state = graph.invoke(initial_state)   
     return final_state
-
-""" 
+"""
 def _display_results(state: HouseholdProfileState):
   
     print("\n[PROFILE COLLECTION RESULTS]")
@@ -148,7 +170,7 @@ def _display_results(state: HouseholdProfileState):
             print("   - {}".format(error))
     
     print("\n" + "="*60)
- """
+"""
 
 def main():   
     profile_1 = {

@@ -189,3 +189,15 @@ Computer: 120 W per device
 
 Refer to the agents attached
 
+
+8 & 9 
+Create an agent that calculates net grid draw by considering the following
+1.Daily energy consumption in kwh from state.profile_data.daily_energy_consumption_kWh 
+2. If the user has how many solar panels installed, get that from state.profile_data.has_solar_panels and  their average battery capacity in kWp from state.profile_data.solar_capacity_kWp
+
+Then calcuate the monthly bill from the net grid draw by multiplying the net grid draw per day by 30.
+
+Add the net grid draw value and monthly bill to state.
+
+make fair assumptions only, if needed. Report them back in response. Refer to attached agents for reference
+
