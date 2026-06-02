@@ -76,7 +76,7 @@ def build_workflow():
     workflow = StateGraph(HouseholdProfileState)
     
     # Add nodes
-    """  
+    
     workflow.add_node("collect_household_profile", collect_household_profile_node)
     workflow.add_node("capture_occupancy_details", capture_occupancy_details_node)
     workflow.add_node("capture_appliances", capture_appliances_node)
@@ -101,14 +101,15 @@ def build_workflow():
     workflow.add_edge("compare_against_similar_households", "solar_roi_analysis")
     workflow.add_edge("solar_roi_analysis", "energy_recommendations")
     workflow.add_edge("energy_recommendations", END)
-    """
+    
 
     
-   
+    """
     workflow.add_node("energy_recommendations", energy_recommendations_node)
 
     workflow.add_edge(START, "energy_recommendations")
     workflow.add_edge("energy_recommendations", END)
+    """
 
     # Compile the graph
     graph = workflow.compile()
