@@ -1,22 +1,3 @@
-Step - 1 
-
-
-Python:
-https://cognizant.udemy.com/course/complete-python-bootcamp/
-
-
-
-
-
-Course link
-
-Phase 1 - https://drive.google.com/drive/folders/1HvzrqVoLk6yP9kAMQo8y2hdDDkiCqZCX?usp=sharing
-
-
-
-Github
-sriramancr/cts_files: All class files
-
 
 Create an agent capture_household_appliances that captures
 
